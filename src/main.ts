@@ -31,7 +31,7 @@ const model = {
     victoryStatus: "FAILED",
     solutionAngle: 0,
     solutionRange: 10,
-    version: "1.0.1",
+    version: "1.0.3",
     tumblerAngle: 0,
     wrenchAngle: 0,
     mousePosition: { x: 0, y: 0 },
@@ -39,17 +39,20 @@ const model = {
     dragEnabled: false,
     showTools: false,
     testLock: async () => {
+      console.clear();
       //wiggle rake
       model.lockpick.wiggle = " wiggle";
       //jiggle lock
       model.lockpick.jiggle = " jiggle";
 
-      const currentAngle = (model.lockpick.wrenchAngle % 360) + 180;
+      //const currentAngle = model.lockpick.wrenchAngle % 360;
+      const currentAngle = mod(model.lockpick.wrenchAngle, 360);
+      console.log("solution", model.lockpick.solutionAngle);
+      console.log("raw wrenchangle: ", model.lockpick.wrenchAngle);
+      console.log("normalized wrenchangle: ", currentAngle);
       const targetAngleLow = model.lockpick.solutionAngle - model.lockpick.solutionRange;
       const targetAngleHigh = model.lockpick.solutionAngle + model.lockpick.solutionRange;
-      console.log(
-        `test- solutionAngle: ${model.lockpick.solutionAngle} wrenchAngle: ${currentAngle} lowlimit: ${targetAngleLow} highlimit: ${targetAngleHigh}`
-      );
+      console.log("targets: ", targetAngleLow, targetAngleHigh);
 
       await wait(1000);
       model.lockpick.wiggle = "";
@@ -95,7 +98,6 @@ const model = {
     },
     tumblerClick: (event: any, model: any) => {
       if (model.lockpick.clickLock) return;
-      console.log("pointerdown", event);
 
       if (!model.lockpick.showTools) {
         model.lockpick.showTools = true;
@@ -116,10 +118,7 @@ const model = {
     tumblerDrag: (event: any, model: any) => {
       if (model.lockpick.clickLock) return;
       if (!model.lockpick.dragEnabled) return;
-      console.log("pointermove", event);
-      console.log("dragging", event);
-      console.log("mouse click position:");
-      console.log(event.x - model.lockpick.mousePosition.x, event.y - model.lockpick.mousePosition.y);
+
       model.lockpick.mouseDragVector.x = event.x - model.lockpick.mousePosition.x;
       model.lockpick.mouseDragVector.y = event.y - model.lockpick.mousePosition.y;
 
@@ -127,17 +126,14 @@ const model = {
         model.lockpick.mouseDragVector.x * model.lockpick.mouseDragVector.x +
           model.lockpick.mouseDragVector.y * model.lockpick.mouseDragVector.y
       );
-      console.log("mag: ", mag);
+
       const ang = rad2ang(Math.atan2(-model.lockpick.mouseDragVector.y, model.lockpick.mouseDragVector.x));
-      console.log("angle: ", ang);
 
       let turnRight = (ang <= 90 && ang >= 0) || (ang >= -90 && ang <= 0);
       if (turnRight) {
-        console.log("turnRight");
         model.lockpick.wrenchAngle += mag / 20;
       } else {
         model.lockpick.wrenchAngle -= mag / 20;
-        console.log("turnleft");
       }
     },
     isHelpVisible: false,
@@ -189,7 +185,7 @@ const model = {
       }
       model.lockpick.solutionAngle = chance.integer({ min: 0, max: 359 });
 
-      console.log(model.lockpick.solutionAngle);
+      console.log("solution: ", model.lockpick.solutionAngle);
     },
     timeIsRunning: false,
     gamePaused: false,
@@ -337,4 +333,8 @@ function loseGame() {
     model.lockpick.lockPicks = [];
     model.lockpick.clickLock = false;
   }, 2500);
+}
+
+function mod(first: number, second: number): number {
+  return ((first % second) + second) % second;
 }
