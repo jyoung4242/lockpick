@@ -3,6 +3,7 @@ import { UI } from "@peasy-lib/peasy-ui";
 import { Assets } from "@peasy-lib/peasy-assets";
 import { Input } from "@peasy-lib/peasy-input";
 import { Chance } from "chance";
+
 let chance = new Chance();
 
 enum colors {
