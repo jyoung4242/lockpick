@@ -15,7 +15,7 @@
   "dependencies": {
     "@peasy-lib/peasy-assets": "^0.2.3",
     "@peasy-lib/peasy-input": "^0.2.0",
-    "@peasy-lib/peasy-ui": "^0.9.41",
+    "@peasy-lib/peasy-ui": "^0.9.43",
     "chance": "^1.1.11"
   },
   "devDependencies": {

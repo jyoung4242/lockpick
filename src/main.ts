@@ -30,7 +30,7 @@ const model = {
     victoryStatus: "FAILED",
     solutionAngle: 0,
     solutionRange: 10,
-    version: "1.0.0",
+    version: "1.0.1",
     tumblerAngle: 0,
     wrenchAngle: 0,
     mousePosition: { x: 0, y: 0 },
@@ -94,6 +94,7 @@ const model = {
     },
     tumblerClick: (event: any, model: any) => {
       if (model.lockpick.clickLock) return;
+      console.log("pointerdown", event);
 
       if (!model.lockpick.showTools) {
         model.lockpick.showTools = true;
@@ -103,17 +104,18 @@ const model = {
         if (!model.lockpick.timeIsRunning) model.lockpick.timeCheck();
       }
 
-      if (event.type == "mousedown") {
+      if (event.type == "pointerdown") {
         model.lockpick.dragEnabled = true;
         model.lockpick.mousePosition.x = event.x;
         model.lockpick.mousePosition.y = event.y;
-      } else if (event.type == "mouseup") {
+      } else if (event.type == "pointerup") {
         model.lockpick.dragEnabled = false;
       }
     },
     tumblerDrag: (event: any, model: any) => {
       if (model.lockpick.clickLock) return;
       if (!model.lockpick.dragEnabled) return;
+      console.log("pointermove", event);
       console.log("dragging", event);
       console.log("mouse click position:");
       console.log(event.x - model.lockpick.mousePosition.x, event.y - model.lockpick.mousePosition.y);
@@ -239,7 +241,7 @@ const template = `<div>
         <option \${'hard' ==> level}>Hard</option>
     </select>
     <input class="result" type="text" readonly \${value<==result}></input>  
-    <div class="minigame" \${mouseup@=>lockpick.tumblerClick} \${===lockpick.isVisible} style="width:\${lockpick.appwidth}px; --damageColor: \${lockpick.damageColor};">
+    <div class="minigame" \${pointerup@=>lockpick.tumblerClick} \${===lockpick.isVisible} style="width:\${lockpick.appwidth}px; --damageColor: \${lockpick.damageColor};">
         <div style="width: 100%;height:10%; "><span class="game_title">Lockpicking</span></div>
         
         <div class="pipFlex">
@@ -257,7 +259,7 @@ const template = `<div>
         <div class="gameborder">
                 <div class="gamebox">
                     <div class="tumblerOuter">
-                        <div class="tumblerInner \${lockpick.jiggle} \${lockpick.openLock}" style="transform: rotate(\${lockpick.tumblerAngle}deg);" \${mousedown@=>lockpick.tumblerClick} \${mousemove@=>lockpick.tumblerDrag}>
+                        <div class="tumblerInner \${lockpick.jiggle} \${lockpick.openLock}" style="transform: rotate(\${lockpick.tumblerAngle}deg);" \${pointerdown@=>lockpick.tumblerClick} \${pointermove@=>lockpick.tumblerDrag}>
                             <div class="rake \${lockpick.damage} \${lockpick.wiggle}" \${===lockpick.showTools} \${click@=>lockpick.testLock}></div>
                             <div class="wrench" \${===lockpick.showTools} style="transform: rotate(\${lockpick.wrenchAngle}deg);"></div>
                         </div>
@@ -274,7 +276,7 @@ const template = `<div>
         <div class="helpModal" \${===lockpick.isHelpVisible}>
           <div class="helpText">
             <p>Instructions: Objective of game is to turn the lockpick wrench to the correct angle</p>
-            <p>Controls: left click on tubler to start lockpicking, left-click and drag left/right to move wrench</p>
+            <p>Controls: left click on tumbler to start lockpicking, left-click and drag left/right to move wrench</p>
             <p>Controls: left click on lockpick rake to test the lock </p>
             <p>GamePlay: depending on the difficulty level you will get a set amount of time and set amount of picks</p>
             <p>Each pick has a health amount so if you exceed that amount the pick will break if you try too many wrong guesses</p>
